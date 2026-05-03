@@ -9,13 +9,16 @@ import java.util.Arrays;
 
 public class readFileMethod {
   public static void main(String[] args) {
-    String inputFileName = "example.txt";
+    String inputFileName = "MustufNotesPlayground/example.txt";
     String[] lines = readFile(inputFileName);
     System.out.println(Arrays.toString(lines));
   }
 
   public static String[] readFile(String fileName) {
     // Create array to store lines (fixed size for simplicity)
+    /**
+     * ! What if the file has more than 100 lines
+     */
     String[] lines = new String[100];
     int index = 0;
 
@@ -23,6 +26,11 @@ public class readFileMethod {
 
     try {
       // Open file for reading
+      /**
+       * ! Does the file exist?
+       * ! Is it empty?
+       * ! Is the file txt format or other format?
+       */
       reader = new BufferedReader(new FileReader(fileName));
       String line;
 

@@ -1,0 +1,7 @@
+This is the first line of the file.
+Here's the second line with more text.
+The third line has some longer words like exceptional.
+Short line.
+A very long line that should test the limits of string processing capabilities.
+Another regular line with some random words.
+End of the file.
