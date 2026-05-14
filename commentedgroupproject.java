@@ -80,6 +80,9 @@ public class commentedgroupproject {
         String[] longWords = new String[100];
         int index = 0;
 
+        // ADDED: Becomes true if array index has exceeded array length to prevent multiple warnings
+        boolean arrayWarning = false; 
+
         // Loop through each line
         for (String line : lines) {
             if (line != null) { // Avoid null pointer issues
@@ -92,7 +95,12 @@ public class commentedgroupproject {
                     if (word.length() > 5) {
 
                         // Prevent array overflow
+                        // ADDED: Warning when data is lost
                         if (index >= longWords.length) {
+                            if (arrayWarning == false) {
+                                System.out.println("WARNING: Maximum long word storage reached. All further long words will be skipped.");
+                                arrayWarning = true;
+                            }
                             break;
                         }
 
