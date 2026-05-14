@@ -110,6 +110,12 @@ public class commentedgroupproject {
             }
         }
 
+        // ADDED: IllegalStateException
+        // Activates if there are no long words found. This won't break the program, but the purpose of the program won't be satisfied 
+        if (index == 0) {
+            throw new IllegalStateException("WARNING: No long words were found in the input file.");
+        }
+
         // Trim array to actual number of words stored
         return Arrays.copyOf(longWords, index);
     }
