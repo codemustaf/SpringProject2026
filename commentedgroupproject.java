@@ -8,33 +8,39 @@ import java.nio.file.StandardCopyOption; // Options for copying files
 import java.util.Arrays;       // Utility for array operations
 
 public class commentedgroupproject {
-
     public static void main(String[] args) {
-        // Define file names
-        String inputFileName = "example.txt";
-        String outputFileName = "output.txt";
-        String copyFileName = "output_copy.txt";
+        try {
+            // Define file names
+            String inputFileName = "example.txt";
+            String outputFileName = "output.txt";
+            String copyFileName = "output_copy.txt";
 
-        // Step 1: Read file contents into an array
-        String[] lines = readFile(inputFileName);
+            // Step 1: Read file contents into an array
+            String[] lines = readFile(inputFileName);
 
-        // Step 2: Process lines to extract words longer than 5 characters
-        String[] longWords = processLines(lines);
+            // Step 2: Process lines to extract words longer than 5 characters
+            String[] longWords = processLines(lines);
 
-        // Step 3: Write results to output file
-        writeFile(outputFileName, longWords);
+            // Step 3: Write results to output file
+            writeFile(outputFileName, longWords);
 
-        // Step 4: Make a copy of the output file
-        makeFileCopy(outputFileName, copyFileName);
+            // Step 4: Make a copy of the output file
+            makeFileCopy(outputFileName, copyFileName);
 
-        // Step 5: Append an extra line to the copied file
-        appendToFile(copyFileName, "Additional line to append");
+            // Step 5: Append an extra line to the copied file
+            appendToFile(copyFileName, "Additional line to append");
 
-        // Step 6: Delete the copied file
-        deleteFile(copyFileName);
+            // Step 6: Delete the copied file
+            deleteFile(copyFileName);
+        
+        } catch (IllegalArgumentException e) {
+            printProgramError(e.getMessage());
+        }     
     }
 
     public static String[] readFile(String fileName) {
+        validateTextFileName(fileName, "Input file");
+
         // Create array to store lines (fixed size for simplicity)
         String[] lines = new String[100];
         int index = 0;
@@ -101,6 +107,8 @@ public class commentedgroupproject {
     }
 
     public static void writeFile(String fileName, String[] content) {
+        validateTextFileName(fileName, "Output file");
+
         FileWriter writer = null;
 
         try {
@@ -129,6 +137,8 @@ public class commentedgroupproject {
     }
 
     public static void appendToFile(String fileName, String content) {
+        validateTextFileName(fileName, "Copy file");
+
         FileWriter writer = null;
 
         try {
@@ -151,6 +161,9 @@ public class commentedgroupproject {
     }
 
     public static void makeFileCopy(String sourceFileName, String destinationFileName) {
+        validateTextFileName(sourceFileName, "Source file");
+        validateTextFileName(destinationFileName, "Copy file");
+
         try {
             // Copy file, replacing if it already exists
             Files.copy(Paths.get(sourceFileName), Paths.get(destinationFileName),
@@ -162,12 +175,54 @@ public class commentedgroupproject {
     }
 
     public static void deleteFile(String fileName) {
+        validateTextFileName(fileName, "Copy file");
+
         try {
             // Delete file if it exists
             Files.deleteIfExists(Paths.get(fileName));
 
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    /**
+     * printProgramError(message) - takes error message from thrown unchecked exception and prints it alongside the message
+     * "Program ended before completing file processing." This method is intended to be used in the catch block 
+     * 
+     * @param message message to be printed
+    */
+    public static void printProgramError(String message) {
+        System.out.println("ERROR: " + message);
+        System.out.println("Program ended before completing file processing.");
+    }
+
+    /**
+     * validateTextFileName(fileName, fileRole) - takes in the file name then checks if it's null, empty, or does not end with ".txt"
+     *  If an exception is thrown, main catches it and prints an error message before the program ends:
+     *      null: "File name cannot be null"
+     *      empty: "File name cannot be empty"
+     *      does not end with ".txt": "File must be a text (.txt) file. Current file:  [file name]"
+     * 
+     * @param fileName string fileName to be checked
+     * @param fileRole string to designate file type for fileName
+     * 
+     * @throws IllegalArgumentException if fileName is null, empty, or is not a text file
+     */
+    public static void validateTextFileName(String fileName, String fileRole) {
+        // if file is null
+        if (fileName == null) {
+            throw new IllegalArgumentException(fileRole + " name cannot be null.");
+        }
+
+        // if file name is empty 
+        if (fileName.trim().isEmpty()) {
+            throw new IllegalArgumentException(fileRole +" name cannot be empty.");
+        }
+
+        // if file is not a text file
+        if (!fileName.toLowerCase().endsWith(".txt")) {
+            throw new IllegalArgumentException(fileRole + " must be a text (.txt) file. Current file: " + fileName);
         }
     }
 }
