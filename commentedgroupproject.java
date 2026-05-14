@@ -80,7 +80,7 @@ public class commentedgroupproject {
         String[] longWords = new String[100];
         int index = 0;
 
-        // ADDED: Becomes true if array index has exceeded array length to prevent multiple warnings
+        // ADDED: Becomes true once the array reaches capacity to prevent multiple warnings
         boolean arrayWarning = false; 
 
         // Loop through each line
