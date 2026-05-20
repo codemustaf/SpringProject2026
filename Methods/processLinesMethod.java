@@ -1,4 +1,4 @@
-package MustufNotesPlayground;
+package Methods;
 
 import java.util.Arrays;
 

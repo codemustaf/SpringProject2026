@@ -1,4 +1,4 @@
-package MustufNotesPlayground;
+package Methods;
 
 import java.io.IOException;
 import java.nio.file.Files;
