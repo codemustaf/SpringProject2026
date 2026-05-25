@@ -48,6 +48,8 @@ public class ExceptionsProcessorWithCheckedExceptionHandling {
             printProgramError(e);
         } catch (IllegalArgumentException e) {
             printProgramError(e.getMessage());
+        } catch (IllegalStateException e) {
+            printProgramError(e.getMessage());
         }
     }
 
@@ -89,61 +91,45 @@ public class ExceptionsProcessorWithCheckedExceptionHandling {
     }
 
     public static String[] processLines(String[] lines) {
+        // Prevent NullPointerException by returning an empty array to continue program
+        if (lines == null) {
+            System.out.println("WARNING: Lines array was null. No words were processed.");
+            return new String[0];
+        }
+
+        String[] longWords = new String[100];
+        int index = 0;
+
         try {
-            // ? Guard clause: reject null argument before it causes NullPointerException
-            if (lines == null) {
-                throw new IllegalArgumentException("Lines array cannot be null.");
-            }
-
-            // Array to store words longer than 5 characters
-            String[] longWords = new String[100];
-            int index = 0;
-
-            // ADDED: Becomes true once the array reaches capacity to prevent multiple
-            // warnings
-            boolean arrayWarning = false;
-
-            // Loop through each line
             for (String line : lines) {
-                if (line != null) { // Avoid null pointer issues
-
-                    // Split line into words based on spaces
+                if (line != null) {
                     String[] words = line.split(" ");
 
                     for (String word : words) {
-                        // Check if word length > 5
+                        // Only accept words longer than 5 letters
                         if (word.length() > 5) {
-
-                            // Prevent array overflow
-                            // ADDED: Warning when data is lost
+                            // Throw ArrayIndexOutOfBoundsException if the array has reached maximum capacity
                             if (index >= longWords.length) {
-                                if (arrayWarning == false) {
-                                    System.out.println(
-                                            "WARNING: Maximum long word storage reached. All further long words will be skipped.");
-                                    arrayWarning = true;
-                                }
-                                break;
+                                throw new ArrayIndexOutOfBoundsException(
+                                        "Maximum long word storage reached. Additional long words were skipped.");
                             }
 
-                            longWords[index++] = word; // Store word
+                            longWords[index++] = word;
                         }
                     }
                 }
             }
 
-            // ADDED: IllegalStateException
-            // Activates if there are no long words found. This won't break the program, but
-            // the purpose of the program won't be satisfied
-            if (index == 0) {
-                throw new IllegalStateException("WARNING: No long words were found in the input file.");
-            }
-
-            // Trim array to actual number of words stored
-            return Arrays.copyOf(longWords, index);
-        } catch (IllegalArgumentException e) {
-            System.out.println("Invalid argument in processLines: " + e.getMessage());
-            return new String[0];
+        } catch (ArrayIndexOutOfBoundsException e) { 
+            // Handle locally so the program can continue with words that were already collected
+            System.out.println("WARNING: " + e.getMessage());
         }
+
+        if (index == 0) {
+            throw new IllegalStateException("No long words were found in the input file.");
+        }
+
+        return Arrays.copyOf(longWords, index);
     }
 
     public static void writeFile(String fileName, String[] content) {
