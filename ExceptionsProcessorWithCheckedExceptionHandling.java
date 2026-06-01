@@ -48,6 +48,8 @@ public class ExceptionsProcessorWithCheckedExceptionHandling {
             printProgramError(e);
         } catch (IllegalArgumentException e) {
             printProgramError(e.getMessage());
+        } catch (SecurityException e) {
+            printProgramError("File access denied by Java security settings: " + e.getMessage());
         }
     }
 
@@ -143,6 +145,9 @@ public class ExceptionsProcessorWithCheckedExceptionHandling {
         } catch (IllegalArgumentException e) {
             System.out.println("Invalid argument in processLines: " + e.getMessage());
             return new String[0];
+        } catch (IllegalStateException e) {
+            System.out.println(e.getMessage());
+            return new String[0];
         }
     }
 
@@ -177,18 +182,23 @@ public class ExceptionsProcessorWithCheckedExceptionHandling {
     }
 
     public static void appendToFile(String fileName, String content) {
-        validateTextFilePath(fileName, "Copy file");
-
         FileWriter writer = null;
 
         try {
+            validateTextFilePath(fileName, "Copy file");
+
             // Open file in append mode
             writer = new FileWriter(fileName, true);
             writer.write(content + "\n");
 
+        } catch (InvalidPathException e) {
+            printWarning("Append skipped because the copy file path is invalid: " + e.getMessage());
+        } catch (IllegalArgumentException e) {
+            printWarning("Append skipped because of an invalid argument: " + e.getMessage());
+        } catch (SecurityException e) {
+            printWarning("Append skipped because file access was denied: " + e.getMessage());
         } catch (IOException e) {
             e.printStackTrace();
-
         } finally {
             if (writer != null) {
                 try {
@@ -201,25 +211,37 @@ public class ExceptionsProcessorWithCheckedExceptionHandling {
     }
 
     public static void makeFileCopy(String sourceFileName, String destinationFileName) {
-        Path sourcePath = validateTextFilePath(sourceFileName, "Source file");
-        Path destinationPath = validateTextFilePath(destinationFileName, "Copy file");
-
         try {
+            Path sourcePath = validateTextFilePath(sourceFileName, "Source file");
+            Path destinationPath = validateTextFilePath(destinationFileName, "Copy file");
+
             // Copy file, replacing if it already exists
             Files.copy(sourcePath, destinationPath, StandardCopyOption.REPLACE_EXISTING);
 
+        } catch (InvalidPathException e) {
+            printWarning("Copy skipped because the source or destination path is invalid: " + e.getMessage());
+        } catch (IllegalArgumentException e) {
+            printWarning("Copy skipped because of an invalid argument: " + e.getMessage());
+        } catch (SecurityException e) {
+            printWarning("Copy skipped because file access was denied: " + e.getMessage());
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     public static void deleteFile(String fileName) {
-        Path path = validateTextFilePath(fileName, "Copy file");
-
         try {
+            Path path = validateTextFilePath(fileName, "Copy file");
+
             // Delete file if it exists
             Files.deleteIfExists(path);
 
+        } catch (InvalidPathException e) {
+            printWarning("Delete skipped because the copy file path is invalid: " + e.getMessage());
+        } catch (IllegalArgumentException e) {
+            printWarning("Delete skipped because of an invalid argument: " + e.getMessage());
+        } catch (SecurityException e) {
+            printWarning("Delete skipped because file access was denied: " + e.getMessage());
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -246,6 +268,15 @@ public class ExceptionsProcessorWithCheckedExceptionHandling {
     public static void printProgramError(InvalidPathException e) {
         System.out.println("ERROR: Invalid file path provided: " + e.getInput() + ". Reason: " + e.getReason());
         System.out.println("Program ended before completing file processing.");
+    }
+
+    /**
+     * Prints warning
+     * 
+     * @param message
+     */
+    public static void printWarning(String message) {
+        System.out.println("WARNING: " + message);
     }
 
     /**
