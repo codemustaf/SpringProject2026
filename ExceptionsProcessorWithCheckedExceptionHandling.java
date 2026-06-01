@@ -246,9 +246,12 @@ public class ExceptionsProcessorWithCheckedExceptionHandling {
     }
 
     /**
-     * Method overload for InvalidPathException messsage
-     * 
-     * @param e
+     * printProgramError(e) - overload for InvalidPathException. Extracts the
+     * invalid path and the reason it failed directly from the exception, then
+     * prints them alongside the message "Program ended before completing file
+     * processing." This method is intended to be used in the catch block.
+     *
+     * @param e the InvalidPathException whose input path and reason are reported
      */
     public static void printProgramError(InvalidPathException e) {
         System.out.println("ERROR: Invalid file path provided: " + e.getInput() + ". Reason: " + e.getReason());
@@ -256,9 +259,11 @@ public class ExceptionsProcessorWithCheckedExceptionHandling {
     }
 
     /**
-     * Prints warning
-     * 
-     * @param message
+     * printWarning(message) - prints a non-fatal warning to the user. Unlike
+     * printProgramError, this does not announce that the program is ending; it
+     * is used for issues the program can recover from and continue past.
+     *
+     * @param message the warning message to be printed
      */
     public static void printWarning(String message) {
         System.out.println("WARNING: " + message);
